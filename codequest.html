@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeQuest — Python Adventure</title>
+<style>
+:root {
+  --site-primary: #7757e8;
+  --site-on-primary: #ffffff;
+  --site-secondary: #20243d;
+  --site-on-secondary: #ffffff;
+  --site-background: #f4f3fb;
+  --site-on-background: #202038;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: light-dark(#f4f3fb,#11111b); color: light-dark(#202038,#f3f0ff); }
+#app { min-height: 100vh; width: 100%; border-radius: 0; background-color: light-dark(var(--site-background), #11111b); color: light-dark(var(--site-on-background), #f3f0ff); }
+header { background: var(--site-secondary); color: var(--site-on-secondary); padding: 22px max(18px, calc((100vw - 1060px)/2)); position: relative; overflow: hidden; }
+header:after { content:""; position:absolute; width:250px; height:250px; border-radius:50%; background:#7757e8; opacity:calc(.16 * var(--site-decoration-opacity)); right:-75px; top:-120px; }
+.topline { display:flex; align-items:center; justify-content:space-between; gap:12px; position:relative; z-index:1; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:850; letter-spacing:-.5px; font-size:22px; }
+.logo { width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--site-primary);font-size:23px; }
+.pill { border:1px solid #565873; color:#e4e0ff; border-radius:999px; padding:7px 11px; font-size:12px; white-space:nowrap; }
+.hero { padding:30px 0 22px; max-width:1060px; position:relative; z-index:1; }
+.eyebrow { text-transform:uppercase; letter-spacing:1.8px; font-size:11px; font-weight:800; color:#bcb0ff; }
+h1 { font-family:var(--site-font-heading); font-size:calc(36px * var(--site-heading-scale)); letter-spacing:-1.5px; line-height:1.08; margin:10px 0 12px; max-width:650px; }
+.hero p { max-width:590px; color:#d3d0e7; line-height:1.6; margin:0 0 19px; }
+button, select, input { font:inherit; }
+button { cursor:pointer; border:0; border-radius:12px; padding:12px 15px; font-weight:750; transition:transform .12s, opacity .12s; }
+button:active { transform:scale(.98); }
+.primary { background:var(--site-primary); color:var(--site-on-primary); }
+.ghost { background:transparent; color:inherit; border:1px solid light-dark(#dad6ee,#41415a); }
+.hero .primary { background:#fff; color:#34235f; }
+main { max-width:1060px; margin:auto; padding:20px 16px 46px; }
+.stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:-2px; }
+.stat,.panel,.quest { background:light-dark(#fff,#1b1b2b); border:1px solid light-dark(#e5e1f1,#303047); border-radius:18px; padding:16px; }
+.stat .num { font-size:26px; font-weight:850; letter-spacing:-1px; margin:7px 0 3px; }
+.muted { color:light-dark(#6c6982,#b5b1ce); font-size:13px; line-height:1.5; }
+.stat-icon { font-size:20px; }
+.section-head { display:flex; align-items:end; justify-content:space-between; gap:12px; margin:27px 0 13px; }
+h2 { font-size:calc(21px * var(--site-heading-scale)); margin:0; letter-spacing:-.5px; }
+h3 { margin:0; font-size:17px; }
+.section-head p { margin:5px 0 0; }
+.progress-track { height:8px; border-radius:99px; background:light-dark(#e9e5f5,#34334a); overflow:hidden; margin-top:12px; }
+.progress-fill { height:100%; background:linear-gradient(90deg,#7757e8,#b18bff); width:0%; border-radius:99px; transition:width .2s; }
+.layout { display:grid; grid-template-columns:1.2fr .8fr; gap:16px; align-items:start; }
+.panel { padding:20px; }
+.panel-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:15px; }
+.smalltag { font-size:11px; font-weight:800; color:#7153da; background:light-dark(#eee9ff,#30254f); padding:6px 9px; border-radius:999px; white-space:nowrap; }
+.quest-list { display:grid; gap:10px; }
+.quest { display:flex; align-items:center; gap:12px; padding:13px; border-radius:14px; }
+.quest .qicon { flex:0 0 40px; height:40px; border-radius:12px; display:grid; place-items:center; background:light-dark(#eeeaff,#30264b); font-size:20px; }
+.quest .qbody { flex:1; min-width:0; }
+.quest h3 { font-size:15px; }
+.quest p { margin:4px 0 0; }
+.quest button { padding:9px 11px; font-size:12px; }
+.quest.done { border-color:#a6ddc2; }
+.quest.done .qicon { background:#ddf8e9; }
+.lesson { border-radius:14px; background:light-dark(#f7f5ff,#232239); padding:15px; line-height:1.6; }
+.lesson p { margin:8px 0; }
+code,pre { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; }
+pre { white-space:pre-wrap; background:light-dark(#201e35,#0c0c16); color:#e7e1ff; padding:15px; border-radius:12px; overflow:auto; line-height:1.65; font-size:13px; }
+.quiz-options { display:grid; gap:9px; margin:13px 0; }
+.quiz-options button { text-align:left; background:light-dark(#f7f6fc,#25253a); color:inherit; border:1px solid light-dark(#e3dfef,#3a3951); }
+.quiz-options button.correct { background:#dcf8e7; color:#175a38; border-color:#7bc99d; }
+.quiz-options button.wrong { background:#ffeded; color:#8e2929; border-color:#f2aaaa; }
+.feedback { min-height:22px; font-size:13px; font-weight:650; margin:8px 0; }
+.challenge-input { width:100%; background:light-dark(#fff,#12121f); color:inherit; border:1px solid light-dark(#d9d5e8,#44435c); border-radius:11px; padding:12px; margin:8px 0 10px; }
+footer { max-width:1060px; margin:auto; padding:0 16px 25px; color:light-dark(#77738c,#a5a1bd); font-size:12px; }
+#toast { min-height:20px; color:#39805b; font-size:13px; font-weight:700; }
+@media(max-width:720px) { header { padding:17px 16px; } h1 {font-size:34px;} .layout {grid-template-columns:1fr;} .stats {gap:8px;} .stat {padding:12px;} .stat .num {font-size:22px;} .stat .muted {font-size:11px;} .hero {padding:27px 0 20px;} }
+@media(prefers-color-scheme:dark) { :root { color-scheme:dark; } }
+@media(prefers-color-scheme:light) { :root { color-scheme:light; } }
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+  <div class="topline">
+    <div class="brand"><div class="logo">⚔</div> CodeQuest</div>
+    <div class="pill">🐍 PYTHON PATH</div>
+  </div>
+  <div class="hero">
+    <div class="eyebrow">YOUR CODING ADVENTURE STARTS HERE</div>
+    <h1>Every master was once a beginner.</h1>
+    <p>Learn Python one quest at a time. Solve challenges, earn XP, and climb the ranks from Novice to Grandmaster.</p>
+    <button class="primary" onclick="document.getElementById('questsTitle').scrollIntoView({behavior:'smooth'})">Continue your quest&nbsp; →</button>
+  </div>
+</header>
+<main>
+  <section class="stats">
+    <div class="stat"><div class="stat-icon">✨</div><div class="num" id="xp">0 XP</div><div class="muted">Experience earned</div></div>
+    <div class="stat"><div class="stat-icon">🏅</div><div class="num" id="rank">Novice</div><div class="muted">Current rank</div></div>
+    <div class="stat"><div class="stat-icon">🗺️</div><div class="num" id="completed">0 / 6</div><div class="muted">Quests completed</div></div>
+  </section>
+  <div class="progress-track" aria-label="Rank progress"><div class="progress-fill" id="progress"></div></div>
+  <div class="section-head" id="questsTitle"><div><h2>Your quest map</h2><p class="muted">Complete lessons and challenges to earn XP.</p></div><span class="smalltag">LEVEL 01</span></div>
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-head"><h2>Python basics</h2><span class="smalltag">6 QUESTS</span></div>
+      <div class="quest-list" id="questList">
+        <div class="quest"><div class="qicon">📜</div><div class="qbody"><h3>1. Meet Python</h3><p class="muted">What is programming?</p></div><button class="primary" onclick="openLesson(0)">Start</button></div>
+        <div class="quest"><div class="qicon">🖨️</div><div class="qbody"><h3>2. Print your message</h3><p class="muted">Display text on screen.</p></div><button class="primary" onclick="openLesson(1)">Start</button></div>
+        <div class="quest"><div class="qicon">📦</div><div class="qbody"><h3>3. Variables</h3><p class="muted">Store information.</p></div><button class="primary" onclick="openLesson(2)">Start</button></div>
+        <div class="quest"><div class="qicon">🔤</div><div class="qbody"><h3>4. Data types</h3><p class="muted">Numbers, text, and more.</p></div><button class="primary" onclick="openLesson(3)">Start</button></div>
+        <div class="quest"><div class="qicon">🧭</div><div class="qbody"><h3>5. Make a decision</h3><p class="muted">Meet if and else.</p></div><button class="primary" onclick="openLesson(4)">Start</button></div>
+        <div class="quest"><div class="qicon">🔁</div><div class="qbody"><h3>6. Repeat with loops</h3><p class="muted">Let Python repeat tasks.</p></div><button class="primary" onclick="openLesson(5)">Start</button></div>
+      </div>
+    </section>
+    <div>
+      <section class="panel" id="lessonPanel">
+        <div class="panel-head"><h2>📘 Lesson camp</h2><span class="smalltag">LEARN</span></div>
+        <div class="lesson" id="lessonContent">
+          <h3>Welcome, quester!</h3>
+          <p>Choose a quest to learn a Python concept, then answer a quick quiz to earn experience.</p>
+          <pre>print("Hello, CodeQuest!")</pre>
+          <p class="muted">Tip: You can learn at your own pace. Mistakes are part of the adventure.</p>
+        </div>
+      </section>
+      <section class="panel" style="margin-top:16px" id="quizPanel">
+        <div class="panel-head"><h2>🧠 Quick quiz</h2><span class="smalltag">+20 XP</span></div>
+        <p id="quizQuestion">What does <code>print("Hi")</code> do?</p>
+        <div class="quiz-options" id="quizOptions">
+          <button onclick="answerQuiz(this,false)">Saves a file</button>
+          <button onclick="answerQuiz(this,true)">Displays Hi</button>
+          <button onclick="answerQuiz(this,false)">Repeats forever</button>
+        </div>
+        <div class="feedback" id="quizFeedback" aria-live="polite"></div>
+      </section>
+    </div>
+  </div>
+  <div class="section-head"><div><h2>⚔️ Coding challenge</h2><p class="muted">Complete a tiny mission to earn bonus XP.</p></div></div>
+  <section class="panel">
+    <div class="panel-head"><h2>Mission: Say hello</h2><span class="smalltag">+30 XP</span></div>
+    <p>Write the Python code that displays <code>Hello, World!</code> exactly.</p>
+    <pre>Example:
+print("Hello, World!")</pre>
+    <label for="codeAnswer" class="muted">Your Python code</label>
+    <input class="challenge-input" id="codeAnswer" autocomplete="off" spellcheck="false" placeholder='print("Hello, World!")'>
+    <button class="primary" onclick="checkChallenge()">Run check</button>
+    <div class="feedback" id="challengeFeedback" aria-live="polite"></div>
+  </section>
+  <div class="section-head"><div><h2>🏆 Rank ladder</h2><p class="muted">Earn XP to unlock new titles.</p></div></div>
+  <section class="panel">
+    <div class="quest-list">
+      <div class="quest"><div class="qicon">🌱</div><div class="qbody"><h3>Novice</h3><p class="muted">0 XP · Your journey begins</p></div><span>Current start</span></div>
+      <div class="quest"><div class="qicon">🛠️</div><div class="qbody"><h3>Apprentice</h3><p class="muted">100 XP · Learn the foundations</p></div></div>
+      <div class="quest"><div class="qicon">💻</div><div class="qbody"><h3>Coder</h3><p class="muted">250 XP · Build your skills</p></div></div>
+      <div class="quest"><div class="qicon">💎</div><div class="qbody"><h3>Expert</h3><p class="muted">500 XP · Solve harder problems</p></div></div>
+      <div class="quest"><div class="qicon">👑</div><div class="qbody"><h3>Master</h3><p class="muted">800 XP · Build real projects</p></div></div>
+      <div class="quest"><div class="qicon">🐉</div><div class="qbody"><h3>Grandmaster</h3><p class="muted">1200 XP · Master complex quests</p></div></div>
+    </div>
+    <p class="muted" style="margin-top:14px">Ranks are prototype milestones. Real mastery comes from understanding, practice, and projects—not XP alone.</p>
+  </section>
+  <div id="toast" aria-live="polite"></div>
+</main>
+<footer>CodeQuest prototype · Your progress is saved on this device in this browser when local storage is available. This demo checks sample answers; it does not run arbitrary Python code.</footer>
+</div>
+<script>
+const lessons = [
+ {title:"Meet Python", body:"Python is a programming language: a way to give clear instructions to a computer.", code:'# Your first comment\nprint("Hello, CodeQuest!")', q:'What is Python?', options:['A programming language','A computer screen','A type of keyboard'], correct:0, explain:'Correct! Python is a programming language.', xp:20},
+ {title:"Print your message", body:"The print() function displays information. Text is placed inside quotation marks.", code:'print("Hello!")\\nprint("I am learning Python")', q:'What does print("Hi") do?', options:['Displays Hi','Deletes a file','Makes a variable'], correct:0, explain:'Correct! print() displays the text.', xp:20},
+ {title:"Variables", body:"A variable gives a name to a value. Use = to assign a value.", code:'player = "Questor"\nscore = 10\nprint(player)\nprint(score)', q:'What value is stored in score?', options:['"score"','10','print'], correct:1, explain:'Correct! score stores the number 10.', xp:20},
+ {title:"Data types", body:"Python values have types. For example, 7 is an integer and \"hello\" is a string (text).", code:'age = 14       # integer\\nname = "Asha"  # string\\nready = True   # boolean', q:'Which one is a string?', options:['42','"Quest"','False'], correct:1, explain:'Correct! Text in quotes is a string.', xp:20},
+ {title:"Make a decision", body:"An if statement runs code when a condition is true. Indent the code inside the condition.", code:'points = 15\nif points >= 10:\n    print("Level up!")', q:'When will the if block run?', options:['When its condition is true','Only at midnight','Never'], correct:0, explain:'Correct! The condition controls whether it runs.', xp:20},
+ {title:"Repeat with loops", body:"A for loop can repeat an action. range(3) produces 0, 1, and 2, so the loop runs three times.", code:'for number in range(3):\n    print(number)', q:'How many times does this loop run?', options:['2 times','3 times','4 times'], correct:1, explain:'Correct! It runs three times.', xp:20}
+];
+let xp=0, completed=new Set(), quizDone=new Set(), challengeDone=false, currentLesson=0;
+try {
+ xp=Number(localStorage.getItem('cq_xp')||0);
+ completed=new Set(JSON.parse(localStorage.getItem('cq_completed')||'[]'));
+ quizDone=new Set(JSON.parse(localStorage.getItem('cq_quiz')||'[]'));
+ challengeDone=localStorage.getItem('cq_challenge')==='true';
+} catch(e) {}
+function persist(){try{localStorage.setItem('cq_xp',xp);localStorage.setItem('cq_completed',JSON.stringify([...completed]));localStorage.setItem('cq_quiz',JSON.stringify([...quizDone]));localStorage.setItem('cq_challenge',String(challengeDone));}catch(e){}}
+function rankFor(v){if(v>=1200)return 'Grandmaster';if(v>=800)return 'Master';if(v>=500)return 'Expert';if(v>=250)return 'Coder';if(v>=100)return 'Apprentice';return 'Novice';}
+function renderStats(){document.getElementById('xp').textContent=xp+' XP';document.getElementById('rank').textContent=rankFor(xp);document.getElementById('completed').textContent=completed.size+' / 6';document.getElementById('progress').style.width=Math.min(100,xp/1200*100)+'%';document.querySelectorAll('#questList .quest').forEach((el,i)=>{if(completed.has(i)){el.classList.add('done');el.querySelector('button').textContent='Completed ✓';el.querySelector('button').disabled=true;el.querySelector('button').style.opacity='.7';}});persist();}
+function award(amount,message){xp+=amount;document.getElementById('toast').textContent=message+' (+'+amount+' XP)';renderStats();}
+function openLesson(i){currentLesson=i;const l=lessons[i];document.getElementById('lessonContent').innerHTML='<h3>'+l.title+'</h3><p>'+l.body+'</p><pre>'+l.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</pre><p class="muted">Read the example, then answer the quiz.</p>';document.getElementById('quizQuestion').textContent=l.q;const opts=document.getElementById('quizOptions');opts.innerHTML='';l.options.forEach((o,j)=>{const b=document.createElement('button');b.textContent=o;b.onclick=()=>answerLessonQuiz(b,j===l.correct,i);opts.appendChild(b);});document.getElementById('quizFeedback').textContent=quizDone.has(i)?'Quiz completed! Choose another quest.':'';document.getElementById('lessonPanel').scrollIntoView({behavior:'smooth',block:'start'});}
+function answerLessonQuiz(btn,correct,i){const buttons=[...document.querySelectorAll('#quizOptions button')];buttons.forEach(b=>b.disabled=true);if(correct){btn.classList.add('correct');document.getElementById('quizFeedback').textContent='Correct! '+lessons[i].explain;if(!quizDone.has(i)){quizDone.add(i);award(lessons[i].xp,'Quiz cleared');}if(!completed.has(i)){completed.add(i);if(!quizDone.has('lesson-'+i)){/* quest completion tracked below */}}renderStats();}else{btn.classList.add('wrong');document.getElementById('quizFeedback').textContent='Not quite. Review the lesson and try again.';const retry=document.createElement('button');retry.className='ghost';retry.textContent='Try again';retry.style.marginTop='8px';retry.onclick=()=>openLesson(i);document.getElementById('quizOptions').appendChild(retry);}}
+function answerQuiz(btn,correct){if(correct){btn.classList.add('correct');document.getElementById('quizFeedback').textContent='Correct! print() displays text.';if(!quizDone.has('starter')){quizDone.add('starter');award(20,'Quiz cleared');}}else{btn.classList.add('wrong');document.getElementById('quizFeedback').textContent='Try again: print() displays text on screen.';return;}document.querySelectorAll('#quizOptions button').forEach(b=>b.disabled=true);}
+function checkChallenge(){const val=document.getElementById('codeAnswer').value.trim().replace(/\s+/g,' ');const good=['print("Hello, World!")',"print('Hello, World!')",'print ( "Hello, World!" )',"print ( 'Hello, World!' )"].includes(val);const f=document.getElementById('challengeFeedback');if(good){f.textContent='Mission complete! Your output would be Hello, World!';if(!challengeDone){challengeDone=true;award(30,'Challenge cleared');}}else{f.textContent='Not quite. Use print() and put Hello, World! inside matching quotes.';}}
+renderStats();
+if(challengeDone){document.getElementById('challengeFeedback').textContent='Mission already completed on this device!';}
+</script>
+</body>
+</html>
